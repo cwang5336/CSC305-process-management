@@ -9,20 +9,17 @@ int main (int argc, char *argv[]){
     cin>>numProcesses;
     Process *processes = new Process[numProcesses];
     for(int i=0; i<numProcesses; i++){
-        cout<<"Enter the pid, burst time, arrival time, and priority for process "<<i+1<<": ";
-        cin>>processes[i].pid>>processes[i].burstTime>>processes[i].arrivalTime>>processes[i].priority;
-        processes[i].executionTime = 0;
-        processes[i].startTime = 0;
-        processes[i].completionTime = 0;
-        processes[i].turnaroundTime = 0;
-        processes[i].averageTurnaroundTime = 0;
+        cout << "Enter the process ID, arrival time, priority, and execution time: ";
+        cin >> processes[i].pid >> processes[i].arrivalTime >> processes[i].priority >> processes[i].burstTime;
     }
+
+    
 
     cout << "First Come First Serve" << endl;
     firstComeFirstServe(processes, numProcesses);
     cout << "Shortest Job First" << endl;
-    shortestJobFirst(processes, numProcesses);
-    cout << "Priority Scheduling" << endl;
-    priorityScheduling(processes, numProcesses);
+    SJN(processes, numProcesses);
+    cout << "Priority " << endl;
+    priority(processes, numProcesses);
     
 }
