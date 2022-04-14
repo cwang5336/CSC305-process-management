@@ -12,8 +12,6 @@ public:
     int startTime;
     int completionTime;
     int turnaroundTime;
-    int waitingTime;
-    int responseTime;
     string order;
 };
 
@@ -24,8 +22,6 @@ void resetProcess(Process *process, int numProcesses)
         process[i].startTime = 0;
         process[i].completionTime = 0;
         process[i].turnaroundTime = 0;
-        process[i].waitingTime = 0;
-        process[i].responseTime = 0;
         process[i].order = "";
     }
 }
@@ -56,8 +52,6 @@ void firstComeFirstServe(Process *process, int numProcesses)
         process[i].startTime = (i == 0) ? process[i].arrivalTime : max(process[i - 1].completionTime, process[i].arrivalTime);
         process[i].completionTime = process[i].startTime + process[i].burstTime;
         process[i].turnaroundTime = process[i].completionTime - process[i].arrivalTime;
-        process[i].waitingTime = process[i].turnaroundTime - process[i].burstTime;
-        process[i].responseTime = process[i].startTime - process[i].arrivalTime;
         totalTurnaroundTime += process[i].turnaroundTime;
 
         process[1].order += to_string(process[i].pid) + " ";
@@ -120,8 +114,6 @@ void SJN(Process *process, int numProcesses)
     }
     for(int i=0; i<numProcesses; i++){
         process[i].turnaroundTime = process[i].completionTime - process[i].arrivalTime;
-        process[i].waitingTime = process[i].turnaroundTime - process[i].burstTime;
-        process[i].responseTime = process[i].startTime - process[i].arrivalTime;
     }
 
     printProcess(process, numProcesses);
@@ -135,16 +127,12 @@ void priority(Process *process, int numProcesses)
     int prev = 0;
     int is_completed[100];
     int burst_remaining[100];
-    int total_idle_time = 0;
     int total_turnaroundTime = 0;
-    int total_waitTime = 0;
-    int total_responseTime = 0;
     memset(is_completed, 0, sizeof(is_completed));
 
     for (int i = 0; i < numProcesses; i++)
     {
-        // process[i].startTime = currentTime;
-        // process[i].responseTime = process[i].startTime - process[i].arrivalTime;
+        process[i].startTime = currentTime;
         burst_remaining[i] = process[i].burstTime;
     }
     while (completed != numProcesses)
@@ -175,7 +163,6 @@ void priority(Process *process, int numProcesses)
             if (burst_remaining[idx] == process[idx].burstTime)
             {
                 process[idx].startTime = currentTime;
-                total_idle_time += process[idx].startTime - prev;
             }
             burst_remaining[idx] -= 1;
             currentTime++;
@@ -185,12 +172,8 @@ void priority(Process *process, int numProcesses)
             {
                 process[idx].completionTime = currentTime;
                 process[idx].turnaroundTime = process[idx].completionTime - process[idx].arrivalTime;
-                process[idx].waitingTime = process[idx].turnaroundTime - process[idx].burstTime;
-                process[idx].responseTime = process[idx].startTime + process[idx].arrivalTime;
 
                 total_turnaroundTime += process[idx].turnaroundTime;
-                total_waitTime += process[idx].waitingTime;
-                total_responseTime += process[idx].responseTime;
 
 
                 process[1].order += to_string(process[idx].pid) + " ";
